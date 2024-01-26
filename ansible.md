@@ -1,6 +1,6 @@
 # "Ansible"
 
-[Vagrantfile](https://github.com/Monoroki/Otus/tree/main/file/Vagrantfile_2)  
+[Vagrantfile](https://github.com/Monoroki/Otus/tree/main/file/Vagrantfile_2)
 
 [Playbook](https://github.com/Monoroki/Otus/tree/main/file/nginx.yml)  
 
