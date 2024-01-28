@@ -1,0 +1,30 @@
+- name: nginx
+  hosts: web
+  become: true
+  tags: 
+   - nginx
+  vars: 
+    ng_lis_port: 8080
+  
+  
+  
+  tasks:
+  
+
+   - name: ensure nginx is installed
+     package: name=nginx update_cache=yes 
+      
+
+   - name: Conf file
+     template: 
+      src: template/nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+      
+     notify: restart nginx 
+
+  handlers: 
+
+    - name: restart nginx
+      systemd:
+        name: nginx.service
+        state: restarted
