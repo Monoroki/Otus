@@ -48,6 +48,42 @@ xfsdump -J - /dev/vg_root/lv_root | \
 ### Выделить том под /var в зеркало
 
 ```bash
+
 pvcreate /dev/sdc /dev/sdd
+vgcreate vg_var /dev/sdc /dev/sdd
+lvcreate -L 950M -m1 -n lv_var vg_var # Создаем зеркало
+
+mkfs.ext4 /dev/vg_var/lv_var # Создаем ФС и перемещаем туда /var
+mount /dev/vg_var/lv_var /mnt
+cp -aR /var/* /mnt/
+
+umount /mnt
+mount /dev/vg_var/lv_var /var # Монтируем новый var в каталог /var
+
+echo "`blkid | grep var: | awk '{print $2}'` \
+ /var ext4 defaults 0 0" >> /etc/fstab #Правим fstab для автоматического монтирования /var
 
 ``` 
+
+### Выделить том под /home
+ 
+По той же системе что делали с /var
+
+### Сапшоты
+
+```bash
+touch /home/file{1..20} # Генерируем файлы
+
+lvcreate -L 100MB -s -n home_snap /dev/VolGroup00/LogVol_Home # Снимаем снапшот
+
+rm -f /home/file{11..20} # Удаляем часть файлов
+
+umount /home
+lvconvert --merge /dev/VolGroup00/home_snap
+mount /home # Восстанавливаем удаленное из снапшота
+```
+###  Результат
+
+![Скриншот01](https://github.com/Monoroki/Otus/blob/main/image/lvm.png)
+
+![Скриншот01](https://github.com/Monoroki/Otus/blob/main/image/lvm2.png)
